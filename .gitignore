@@ -1,0 +1,4 @@
+*.py
+*.jpg
+__pycahce__/
+workers/
