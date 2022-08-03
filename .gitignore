@@ -1,4 +1,4 @@
-*.py
+*test*.py
+*.png
 *.jpg
-__pycahce__/
-workers/
+__pycache__
