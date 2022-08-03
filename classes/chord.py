@@ -13,8 +13,7 @@ class Chords():
 
     def setChords(self):
         self._chords.clear()
-        index = NOTESARR.index(self.rootNote)
-        print(index)
+        index = NOTESARR.index(self.rootNote[0])
         currentChords = {
         "1": NOTESARR[index].upper() + ' Major',
         "2": NOTESARR[index+2].upper() + ' minor',

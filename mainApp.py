@@ -23,7 +23,6 @@ for i in range(12):
     DEGBIGCIRCLE.append(0.5+r)
 circleBigId = {}
 text_chordsId = {}
-currentChords = {}
 lastBigCircleId = False
 lastSmallCircleId = False
 playing = False
@@ -37,6 +36,7 @@ col_graph = [[sg.Graph(key='-G-', canvas_size=(700, 700), enable_events=True, gr
 
 col_input = [
     [sg.Checkbox("Minor", enable_events=True, key='-M-')],
+    [sg.Checkbox("Arpeggiator", enable_events=True, key='-ARP-')],
     [sg.Text('Duration')],
     [sg.Input( expand_x=True, size=(5, 5),
               key='-INP1-'), sg.Button('Ok', key='-INP_BUTT1-')],
@@ -49,18 +49,16 @@ col_input = [
 ]
 
 layout = [
-    [sg.Button('Exit'), sg.Text(text="Semmi", key="-TEXT-"),
-               sg.Button('Start'), sg.Button('Stop')],
+    [sg.Button('Exit'),sg.Button('Start'), sg.Button('Stop')],
      [sg.Column(col_graph), sg.Column(col_input)]
 ]
 
 window = sg.Window("Canvas",
                    layout, size=(850, 800),
                    resizable=True,
-                   finalize=True,
-                   return_keyboard_events=True)
+                   finalize=True
+                   )
 graph = window['-G-']
-window['-INP1-'].block_focus(block = True)
 
 # Methods
 
@@ -150,18 +148,23 @@ def colorSmallFigure():
     graph.Widget.itemconfig(circleSmallId[chordName.upper()][myChords.getLastChord()], outline='#73E14E')
     graph.Widget.itemconfig(circleSmallId[chordName.upper()][myChords.getCurrnetChord()], outline='blue')
 
+def bindInputs():
+    inputs = ['1','2','3','4','5','6','7','m','p','<Up>','<Down>']
+    for x in inputs:
+        graph.bind(x,x)
 
 drawBigC()
 drawP()
 drawRectangel()
 drawSmallC()
 
+graph.set_focus(True)
+bindInputs()
 myChords = Chords('C')
 myMidiWorker = MidiWorker(daemon=True)
 # Main loop
 while True:
     event, values = window.read()
-    print(event)
     match event:
         case sg.WIN_CLOSED:
             del myMidiWorker
@@ -170,13 +173,14 @@ while True:
         case 'Exit':
             break
         case '-G-':                                                                      # Main interface, the graph
-            window['-TEXT-'].update(values)
             figure = window['-G-'].get_figures_at_location(values['-G-'])                # Get clicked figure
             if figure:
                 figure = figure[0]
             if figure in text_chordsId:                                                  # Set chord progression
-                currentChords = myChords.getCurrentChords()
                 myChords.setRootNote(text_chordsId[figure])
+                myChords.setCurrentChord('1')
+                currentChords = myChords.getCurrentChords()
+                myMidiWorker.setMajor(True)
                 if lastBigCircleId :                                                          # Display chord progression
                     colorFigures(lastBigCircleId, "white")
                     graph.delete_figure(centerTextId)
@@ -195,45 +199,61 @@ while True:
 
         case 'Stop':
             myMidiWorker.setIsRunning(False)
+            myMidiWorker.instantStop()
             try:
                 colorFigures(lastBigCircleId, "white")
             except: pass
             playing = False
         case 'Start':
             myMidiWorker.setIsRunning(True)
+            try:
+                colorFigures(lastBigCircleId, "#52acff")
+            except: pass
             playing = True
         case '-INP_BUTT1-':
+            graph.set_focus(True)
             try:
                 myMidiWorker.setDuration(float(60/int(values["-INP1-"])))
             except:
                 sg.popup_error('Faild to set duration', auto_close=True,auto_close_duration=0.5)
         case '-INP_BUTT2-':
+            window['-INP2-'].block_focus()
+            graph.set_focus(True)
             try:
                 myMidiWorker.setInterval(float(values["-INP2-"]))
             except:
                 sg.popup_error('Faild to set interval', auto_close=True,auto_close_duration=0.5)
         case '-M-':
             myMidiWorker.setMajor(not window['-M-'].get())
-        case 'm':
+        case '-ARP-':
+            myMidiWorker.setArpeggiatror(window['-ARP-'].get())
+        case '-G-m':
             window['-M-'].update(value=(not window['-M-'].get()))
             myMidiWorker.setMajor(not window['-M-'].get())
-        case 'p':
+        case '-G-p':
             if playing:
                 myMidiWorker.setIsRunning(False)
+                myMidiWorker.instantStop()
                 playing = False
             else:
                 myMidiWorker.setIsRunning(True)
                 playing = True
-        case '1'|'2'|'3'|'4'|'5'|'6'|'7':
-            if event in ['2','3','6']: myMidiWorker.setMajor(False)
+        case '-G-1'|'-G-2'|'-G-3'|'-G-4'|'-G-5'|'-G-6'|'-G-7':
+            key = event[-1:]
+            if key in ['2','3','6']: myMidiWorker.setMajor(False)
             else : myMidiWorker.setMajor(True)
             try:
-                myChords.setCurrentChord(chord=event)
+                myChords.setCurrentChord(chord=key)
                 myMidiWorker.setStartNote(myChords.getCurrentNoteValue())
                 if centerChordTextId:
                     graph.delete_figure(centerChordTextId)
                 centerChordTextId = drawText(currentChords[myChords.getCurrnetChord()], (0,-20),10,0)
-                if event != '7' :colorSmallFigure()
+                if key != '7' :colorSmallFigure()
             except:
                 pass
+        case '-G-<Up>':
+            myMidiWorker.increaseRange()
+        case '-G-<Down>':
+            myMidiWorker.decreaseRange()
+
 
