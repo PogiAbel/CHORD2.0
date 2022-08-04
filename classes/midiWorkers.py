@@ -76,6 +76,10 @@ class MidiWorker(threading.Thread):
         with self.lock:
             self._isRunning = is_running
 
+    def getIsRunning(self):
+        with self.lock:
+            return self._isRunning
+
     def getNote(self):
         with self.lock:
             return self._note

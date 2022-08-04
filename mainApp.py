@@ -138,16 +138,16 @@ def colorFigures(figureId, color):
     if color != "white":
         color = "#73E14E"
     for k, v in circleSmallId[chordName].items():
-        if k == '1' and color != 'white':
-            graph.Widget.itemconfig(v, outline='blue')
-        else:
-            graph.Widget.itemconfig(v, outline=color)
+        graph.Widget.itemconfig(v, outline=color)
+    if myMidiWorker.getIsRunning():
+        colorSmallFigure()
 
 def colorSmallFigure(skip = False):
     chordName = myChords.rootNote
     graph.Widget.itemconfig(circleSmallId[chordName.upper()][myChords.getLastChord()], outline='#73E14E')
     if not skip:
         graph.Widget.itemconfig(circleSmallId[chordName.upper()][myChords.getCurrnetChord()], outline='blue')
+    
 
 def bindInputs():
     inputs = ['1','2','3','4','5','6','7','m','p','<Up>','<Down>']
@@ -207,9 +207,7 @@ while True:
             playing = False
         case 'Start':
             myMidiWorker.setIsRunning(True)
-            try:
-                colorFigures(lastBigCircleId, "#52acff")
-            except: pass
+            colorFigures(lastBigCircleId, "#52acff")
             playing = True
         case '-INP_BUTT1-':
             graph.set_focus(True)
