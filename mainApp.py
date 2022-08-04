@@ -39,10 +39,10 @@ col_input = [
     [sg.Checkbox("Arpeggiator", enable_events=True, key='-ARP-')],
     [sg.Text('Duration')],
     [sg.Input( expand_x=True, size=(5, 5),
-              key='-INP1-'), sg.Button('Ok', key='-INP_BUTT1-')],
+              key='-INP1-',tooltip='Duration of the notes in ns'), sg.Button('Ok', key='-INP_BUTT1-')],
     [sg.Text('Interval')],
     [sg.Input(enable_events=True, expand_x=True, size=(5, 5),
-              key='-INP2-'), sg.Button('Ok', key='-INP_BUTT2-')],
+              key='-INP2-',tooltip='Time between chords in ms'), sg.Button('Ok', key='-INP_BUTT2-')],
     [sg.Text('BPM')],
     [sg.Input(enable_events=True, expand_x=True, size=(5, 5),
               key='-INP3-'), sg.Button('Ok', key='-INP_BUTT3-')],
@@ -213,7 +213,7 @@ while True:
         case '-INP_BUTT1-':
             graph.set_focus(True)
             try:
-                myMidiWorker.setDuration(float(60/int(values["-INP1-"])))
+                myMidiWorker.setDuration(float(values["-INP1-"]))
             except:
                 sg.popup_error('Faild to set duration', auto_close=True,auto_close_duration=0.5)
         case '-INP_BUTT2-':

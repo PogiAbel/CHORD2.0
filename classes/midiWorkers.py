@@ -120,7 +120,6 @@ class MidiWorker(threading.Thread):
 
             note_off = [0x80, x, 0] 
             midi.send_message(note_off)
-            time.sleep(self._playtime/3)
 
     def play(self):
         start = self.getNote()
