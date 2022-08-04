@@ -143,10 +143,11 @@ def colorFigures(figureId, color):
         else:
             graph.Widget.itemconfig(v, outline=color)
 
-def colorSmallFigure():
+def colorSmallFigure(skip = False):
     chordName = myChords.rootNote
     graph.Widget.itemconfig(circleSmallId[chordName.upper()][myChords.getLastChord()], outline='#73E14E')
-    graph.Widget.itemconfig(circleSmallId[chordName.upper()][myChords.getCurrnetChord()], outline='blue')
+    if not skip:
+        graph.Widget.itemconfig(circleSmallId[chordName.upper()][myChords.getCurrnetChord()], outline='blue')
 
 def bindInputs():
     inputs = ['1','2','3','4','5','6','7','m','p','<Up>','<Down>']
@@ -249,6 +250,7 @@ while True:
                     graph.delete_figure(centerChordTextId)
                 centerChordTextId = drawText(currentChords[myChords.getCurrnetChord()], (0,-20),10,0)
                 if key != '7' :colorSmallFigure()
+                else: colorSmallFigure(True)
             except:
                 pass
         case '-G-<Up>':
