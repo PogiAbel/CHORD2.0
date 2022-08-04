@@ -33,8 +33,12 @@ class MidiWorker(threading.Thread):
             midi.send_message(note_off)
     
     def setDuration(self,setTime):
-        with self.lock:
-            self._playtime = setTime
+            with self.lock:
+                if self._interval+self._playtime > 0.05:
+                    self._playtime = setTime
+                    return True
+                else:
+                    return False
 
     def increaseRange(self):
         with self.lock:
@@ -49,8 +53,12 @@ class MidiWorker(threading.Thread):
                 self._note -= 12
 
     def setInterval(self,setTime):
-        with self.lock:
-            self._interval = setTime
+            with self.lock:
+                if self._interval+self._playtime > 0.05:
+                    self._interval = setTime
+                    return True
+                else:
+                    return False
 
     def setArpeggiatror(self,isOn = bool):
         with self.lock:

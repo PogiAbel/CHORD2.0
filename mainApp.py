@@ -213,16 +213,12 @@ while True:
             playing = True
         case '-INP_BUTT1-':
             graph.set_focus(True)
-            try:
-                myMidiWorker.setDuration(float(values["-INP1-"]))
-            except:
-                sg.popup_error('Faild to set duration', auto_close=True,auto_close_duration=0.5)
+            if not myMidiWorker.setDuration(float(values["-INP1-"])):
+                sg.popup_error('Faild to set duration', auto_close=True,auto_close_duration=1)
         case '-INP_BUTT2-':
             window['-INP2-'].block_focus()
             graph.set_focus(True)
-            try:
-                myMidiWorker.setInterval(float(values["-INP2-"]))
-            except:
+            if not myMidiWorker.setInterval(float(values["-INP2-"])):
                 sg.popup_error('Faild to set interval', auto_close=True,auto_close_duration=0.5)
         case '-M-':
             myMidiWorker.setMajor(not window['-M-'].get())
