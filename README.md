@@ -10,7 +10,7 @@ This project use rtmidi and threading.
 #### *Rtmidi need c++ building tools(ver 14+)*
 ---
 ## So what can you do in this app?
-- First click on a note then you can play on the note key
+- First click on a note then you can play on the notes in the key
 - With 1-7 buttons you can change chord in the key
 - You can change between major and minor induvidial chord with the check box or with the 'm' key
 - You can play the chord notes simultaneously or induvidially, you can set this with the arpeggiator chechk box
