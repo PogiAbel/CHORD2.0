@@ -42,10 +42,7 @@ col_input = [
               key='-INP1-',tooltip='Duration of the notes in ns'), sg.Button('Ok', key='-INP_BUTT1-')],
     [sg.Text('Interval')],
     [sg.Input(enable_events=True, expand_x=True, size=(5, 5),
-              key='-INP2-',tooltip='Time between chords in ms'), sg.Button('Ok', key='-INP_BUTT2-')],
-    [sg.Text('BPM')],
-    [sg.Input(enable_events=True, expand_x=True, size=(5, 5),
-              key='-INP3-'), sg.Button('Ok', key='-INP_BUTT3-')],
+              key='-INP2-',tooltip='Time between chords in ms'), sg.Button('Ok', key='-INP_BUTT2-')]
 ]
 
 layout = [
