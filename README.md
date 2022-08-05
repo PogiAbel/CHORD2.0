@@ -3,9 +3,9 @@
 
 Start with this [this](https://github.com/AhmadMoussa/Python-Midi-Ableton/blob/master/Readme.md)
 ---
-## Then you need
+## Then you need:
 
-This project use rtmidi and threading.
+This project use rtmidi and pysimplegui
 
 #### *Rtmidi need c++ building tools(ver 14+)*
 ---
@@ -15,6 +15,7 @@ This project use rtmidi and threading.
 - You can change between major and minor induvidial chord with the check box or with the 'm' key
 - You can play the chord notes simultaneously or induvidially, you can set this with the arpeggiator chechk box
 - Can pause with the 'p' key
+- You can change the time between notes and the lentgh of a note(in ms)
 
 ---
 
