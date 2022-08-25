@@ -7,14 +7,14 @@ from classes.chord import Chords
 # Variables
 FIFTHSROMAN = ['I', 'IV', 'ii', 'vi', 'iii', 'V']
 FIFTHSLATIN = ['1','4','2','6','3','5']
-CHORDS = [['A', 'C'], ['D', 'F'], ['G', 'A#'], ['C', 'D#'], ['F', 'G#'], ['A#', 'C#'], [
+CHORDS = [['A', 'C'], ['D', 'F'], ['G', 'Bb'], ['C', 'Eb'], ['F', 'Ab'], ['A#', 'Db'], [
     'D#', 'F#'], ['G#', 'B'], ['C#', 'E'], ['F#', 'A'], ['B', 'D'], ['E', 'G']]
 NOTESDICT = {'c': 60, 'c#': 61, 'db': 61, 'd': 62, 'd#': 63, 'eb': 63, 'e': 64, 'f': 65,
     'f#': 66, 'gb': 66, 'g': 67, 'g#': 68, 'ab': 68, 'a': 69, 'a#': 70, 'bb': 70, 'b': 71}
 NOTESARR = [k for k, v in NOTESDICT.items() if 'b' not in k]+['b']
 NOTESARR += NOTESARR
 DEGSMALLCIRCLE = [0.5, 1, 4/3, 1.5, 5/3, 2]
-circleSmallId = {x[1]: {} for x in CHORDS}
+circleSmallId = {x[1].lower(): {} for x in CHORDS}
 DEGBIGCIRCLE = []
 ROTATE = []
 for i in range(12):
@@ -38,10 +38,10 @@ col_input = [
     [sg.Checkbox("Minor", enable_events=True, key='-M-')],
     [sg.Checkbox("Arpeggiator", enable_events=True, key='-ARP-')],
     [sg.Text('Duration')],
-    [sg.Input( expand_x=True, size=(5, 5),
+    [sg.Input( '0.5',expand_x=True, size=(5, 5),
               key='-INP1-',tooltip='Duration of the notes in ns'), sg.Button('Ok', key='-INP_BUTT1-')],
     [sg.Text('Interval')],
-    [sg.Input(enable_events=True, expand_x=True, size=(5, 5),
+    [sg.Input('0.5',enable_events=True, expand_x=True, size=(5, 5),
               key='-INP2-',tooltip='Time between chords in ms'), sg.Button('Ok', key='-INP_BUTT2-')]
 ]
 
@@ -108,7 +108,7 @@ def drawSmallC():
         for j in DEGSMALLCIRCLE:
             x = (200*math.cos(i*pi))+(100*math.cos((j+ROTATE[rot])*pi))
             y = (200*math.sin(i*pi))+(100*math.sin((j+ROTATE[rot])*pi))
-            circleSmallId[CHORDS[rot][1]].update(
+            circleSmallId[CHORDS[rot][1].lower()].update(
                 {FIFTHSLATIN[k]: drawCircle((x, y), 10, 'black')})
             drawText(FIFTHSROMAN[k], (x, y), 10, ROTATE[rot]*180)
             k += 1
@@ -134,30 +134,32 @@ def colorFigures(figureId, color):
     graph.Widget.itemconfig(bigCid, outline=color)
     if color != "white":
         color = "#73E14E"
-    for k, v in circleSmallId[chordName].items():
+    for k, v in circleSmallId[chordName.lower()].items():
         graph.Widget.itemconfig(v, outline=color)
     if myMidiWorker.getIsRunning():
         colorSmallFigure()
 
 def colorSmallFigure(skip = False):
-    chordName = myChords.rootNote
-    graph.Widget.itemconfig(circleSmallId[chordName.upper()][myChords.getLastChord()], outline='#73E14E')
+    chordName = myChords.rootNote.lower()
+    graph.Widget.itemconfig(circleSmallId[chordName][myChords.getLastChord()], outline='#73E14E')
     if not skip:
-        graph.Widget.itemconfig(circleSmallId[chordName.upper()][myChords.getCurrnetChord()], outline='blue')
+        graph.Widget.itemconfig(circleSmallId[chordName][myChords.getCurrnetChord()], outline='blue')
     
 
 def bindInputs():
     inputs = ['1','2','3','4','5','6','7','m','p','<Up>','<Down>']
     for x in inputs:
         graph.bind(x,x)
+    window['-INP1-'].bind('<Return>','_Enter')
+    window['-INP2-'].bind('<Return>','_Enter')
 
 drawBigC()
 drawP()
 drawRectangel()
 drawSmallC()
+bindInputs()
 
 graph.set_focus(True)
-bindInputs()
 myChords = Chords('C')
 myMidiWorker = MidiWorker(daemon=True)
 # Main loop
@@ -206,11 +208,11 @@ while True:
             myMidiWorker.setIsRunning(True)
             colorFigures(lastBigCircleId, "#52acff")
             playing = True
-        case '-INP_BUTT1-':
+        case '-INP_BUTT1-' | '-INP1-_Enter':
             graph.set_focus(True)
             if not myMidiWorker.setDuration(float(values["-INP1-"])):
                 sg.popup_error('Faild to set duration', auto_close=True,auto_close_duration=1)
-        case '-INP_BUTT2-':
+        case '-INP_BUTT2-' | '-INP2-_Enter':
             window['-INP2-'].block_focus()
             graph.set_focus(True)
             if not myMidiWorker.setInterval(float(values["-INP2-"])):
@@ -248,5 +250,3 @@ while True:
             myMidiWorker.increaseRange()
         case '-G-<Down>':
             myMidiWorker.decreaseRange()
-
-

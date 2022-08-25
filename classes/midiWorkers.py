@@ -20,6 +20,7 @@ class MidiWorker(threading.Thread):
         self.start()
 
     def __del__(self):
+        self.instantStop()
         del self._midiout
         del self
 
