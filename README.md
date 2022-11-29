@@ -13,7 +13,7 @@ This project use rtmidi and pysimplegui
 - First click on a note then you can play on the notes in the key
 - With 1-7 buttons you can change chord in the key
 - You can change between major and minor induvidial chord with the check box or with the 'm' key
-- You can play the chord notes simultaneously or induvidially, you can set this with the arpeggiator chechk box
+- You can play the chord notes simultaneously or induvidially, you can set this with the arpeggiator check box
 - Can pause with the 'p' key
 - You can change the time between notes and the lentgh of a note(in ms)
 
